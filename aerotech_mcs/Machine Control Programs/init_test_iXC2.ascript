@@ -1,0 +1,73 @@
+program
+
+	Enable(X)
+	
+	//MoveAbsolute(X, 0.0, 10.0)
+	//WaitForMotionDone(X)
+	Home(X)
+	
+	var $step_size as real = 5.0
+	var $step_limit as real = 10.0
+	//Max speed is 500mm/s
+	var $speed_limit as real = 10.0
+	//Max Accel is 5g
+	var $accel as real = 10.0
+	TimerClear(0)
+	
+	//Setting smooth acceleration + accel. value
+	SetupAxisRampType(X, RampType.SCurve)
+	SetupAxisRampValue(X, RampMode.Rate, $accel)
+	
+	//Motion
+	//Motion Limit for ANT95L is 25mm total (+/- 12.5mm)
+	
+	/* //Position feedback test:
+	while (TimerRead(0, TimerMode.Standard) <= 30)
+		while (StatusGetAxisItem(X, AxisStatusItem.PositionFeedback)+$step_size < $step_limit)
+			MoveIncremental(X, $step_size, $speed_limit)
+			WaitForMotionDone(X)
+		end
+		while (StatusGetAxisItem(X, AxisStatusItem.PositionFeedback)-$step_size > -$step_limit)
+			MoveIncremental(X, -$step_size, $speed_limit)
+			WaitForMotionDone(X)
+		end
+	end
+	*/
+	
+	//Speed Test:
+	/*
+	var $num_cycles as integer = 0
+	while (TimerRead(0, TimerMode.Standard) <= 1e4)
+		AppMessageDisplay("Init. Time: " + RealToString(TimerRead(0, TimerMode.Standard)))
+		MoveAbsolute(X, -6.0, $speed_limit)
+		WaitForMotionDone(X)
+		
+		//AppMessageDisplay("Cycle 1 Time: " + RealToString(TimerRead(0, TimerMode.Standard)))
+		
+		MoveAbsolute(X, 6.0, $speed_limit)
+		WaitForMotionDone(X)
+		//AppMessageDisplay("Cycle 2 Time: " + RealToString(TimerRead(0, TimerMode.Standard)))
+		
+		$num_cycles++
+	end
+	AppMessageDisplay("Number of Cycles: " + IntegerToString($num_cycles))
+	*/
+	
+	//Max Specs Test:
+	MoveAbsolute(X, -5.0, $speed_limit)
+	WaitForMotionDone(X)
+	
+	Dwell(1.0)
+	
+	MoveAbsolute(X, 5.0, $speed_limit)
+	WaitForMotionDone(X)
+	
+	Dwell(1.0)
+	
+	MoveAbsolute(X, 0.0, $speed_limit)
+	WaitForMotionDone(X)
+	
+	Home(X)
+	Disable(X)
+
+end

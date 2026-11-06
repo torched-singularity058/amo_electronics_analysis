@@ -1,0 +1,50 @@
+program
+	
+	var $numSamples as integer = 10 * 20.0 * 1000
+	// collect for 10 sec @ 20kHz
+	var $sampleTime as real = 1.0 / 20.0
+	// 1ms/20.0 sample = 0.05msec/sample
+	var $filePath as string = "C:/Users/danie/OneDrive/Job Stuff/Chin_Research_2025-2026/LiCs_MCS"
+	var $fileName as string = $filePath + "/testdata100mms"
+	
+	var $velocity as real = 100.0
+	
+	SetupAxisRampType(X, RampType.Sine)
+	SetupAxisRampValue(X, RampMode.Rate, 15000.0)
+	
+	AppDataCollectionReset()
+	AppDataCollectionAddAxisSignal(X, AxisDataSignal.PositionCommand)
+	AppDataCollectionAddAxisSignal(X, AxisDataSignal.PositionFeedback)
+	AppDataCollectionAddAxisSignal(X, AxisDataSignal.CurrentFeedback)
+	AppDataCollectionAddAxisSignal(X, AxisDataSignal.AxisStatus)
+	AppDataCollectionAddTaskSignal(1, TaskDataSignal.TaskState)
+	
+	AppDataCollectionConfigure($numSamples, $sampleTime)
+	//Set sample num & time per sample
+	AppDataCollectionAutoSaveOn($fileName, DataCollectionFileType.Csv)
+	//collects csv data & stores locally (relative mdk doc location in Documents folder)
+	
+	Enable(X)
+	Home(X)
+	WaitForMotionDone(X)
+	
+	AppDataCollectionSnapshot()
+	
+	MoveAbsolute(X, 10.0, $velocity)
+	WaitForInPosition(X)
+	
+	MoveAbsolute(X, 0.0, $velocity)
+	WaitForInPosition(X)
+	
+	Dwell(0.5)
+	
+	MoveAbsolute(X, -10.0, $velocity)
+	WaitForInPosition(X)
+	
+	MoveAbsolute(X, 0, $velocity)
+	WaitForInPosition(X)
+	
+	AppDataCollectionStop()
+	
+	Disable(X)
+end

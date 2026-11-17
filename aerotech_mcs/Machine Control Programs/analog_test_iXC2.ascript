@@ -2,13 +2,13 @@
 program
 
 	// data collection parameters
-	var $numSamples as integer = 100 * 1 * 1000
-	// collect for 100 sec @ 1kHz
+	var $numSamples as integer = 20 * 10 * 1000
+	// collect for 100 sec @ 10kHz; only certain fixed rates are supported
 	//
 	//  NOTE: WATCH FOR MEMORY OVERLOAD
 	//
-	var $sampleTime as real = 1.0
-	// 1.0ms/1 sample = 1msec/sample
+	var $sampleTime as real = 0.1
+	// 4kHz --> 1/4 msec./sample
 	var $filePath as string = "C:/Users/danie/OneDrive/Job Stuff/Chin_Research_2025-2026/LiCs_MCS/testanalog"
 	var $fileName as string = $filePath + "/testanalog100mms"
 	
@@ -16,10 +16,12 @@ program
 	AppDataCollectionReset()
 	AppDataCollectionAddAxisSignal(X, AxisDataSignal.PositionCommand)
 	AppDataCollectionAddAxisSignal(X, AxisDataSignal.PositionFeedback)
+	AppDataCollectionAddAxisSignal(X, AxisDataSignal.VelocityFeedback)
+	AppDataCollectionAddAxisSignal(X, AxisDataSignal.CurrentCommand)
 	AppDataCollectionAddAxisSignal(X, AxisDataSignal.CurrentFeedback)
 	AppDataCollectionAddAxisSignal(X, AxisDataSignal.AxisStatus)
 	AppDataCollectionAddAxisSignal(X, AxisDataSignal.AnalogInput0)
-	AppDataCollectionAddTaskSignal(1, TaskDataSignal.TaskState)
+	//AppDataCollectionAddTaskSignal(1, TaskDataSignal.TaskState)
 
 	AppDataCollectionConfigure($numSamples, $sampleTime)
 	//Set # samples & time per sample
@@ -29,8 +31,8 @@ program
 	Enable(X)
 	var $signal_resolution as real = 0.1 // V
 	var $idle_stop_time as real = 2e5 // msec.
-	var $stage_speed as real = 10.0 // mm/s
-	var $accel as real = 1000.0 //mm/s^2
+	var $stage_speed as real = 70.0 // mm/s
+	var $accel as real = 6000.0 //mm/s^2
 	
 	SetupAxisRampType(X, RampType.Sine)
 	SetupAxisRampValue(X, RampMode.Rate, $accel)
